@@ -1,7 +1,8 @@
-import React from 'react'
+import React from 'react';
+import { DatePicker } from 'antd';
 
-export default function App() {
-  return (
-    <div>App</div>
-  )
-}
+const App = () => {
+  return <DatePicker />;
+};
+
+export default App;
