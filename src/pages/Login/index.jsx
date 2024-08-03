@@ -1,7 +1,7 @@
 import './index.scss'
 import { Card, Form, Input, Button, message } from 'antd'
 import logo from '@/assets/logo.png'
-import { fetctToken } from '@/store/userStore'
+import { fetchToken } from '@/apis/getToken'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate()
   // 格式正确提交回调
   const onFinish = async (userData) => {
-    await disPatch(fetctToken(userData))
+    await disPatch(fetchToken(userData))
     navigate('/')
     message.success('登录成功')
   }
