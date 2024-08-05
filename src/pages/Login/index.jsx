@@ -40,7 +40,7 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                message: '验证码',
+                message: '请输入验证码',
               },
               {
                 pattern: /^\d{6}$/,

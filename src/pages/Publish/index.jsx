@@ -15,20 +15,15 @@ import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { fetchChannels } from '@/apis/getChannels'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { fetchPublish } from '@/apis/postPublish'
+import useChannels from '@/hooks/useChannels'
 
 const { Option } = Select
 
 const Publish = () => {
-  const [channels, setChannels] = useState([])
   // 获取频道
-  useEffect(() => {
-    ;(async () => {
-      setChannels(await fetchChannels())
-    })()
-  }, [])
+  const { channels } = useChannels()
 
   // 上传封面
   const [imgType, setImgType] = useState(0)

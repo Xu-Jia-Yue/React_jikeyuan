@@ -6,7 +6,7 @@ import { message } from 'antd'
 // 自定义创建axios实例
 const request = axios.create({
   baseURL: 'http://geek.itheima.net/v1_0',
-  timeout: 5000,
+  timeout: 10000,
 })
 
 // 添加请求拦截器
@@ -33,7 +33,7 @@ request.interceptors.response.use(
   },
   (error) => {
     // 响应出错回调
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       message.error('身份验证过期,请重新登录')
       clearLocalToken()
       router.navigate('/login')
