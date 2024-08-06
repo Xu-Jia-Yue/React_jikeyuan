@@ -19,7 +19,7 @@ import useChannels from '@/hooks/useChannels'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import img404 from '@/assets/error.png'
-import { deleteArticle, fecthArticle } from '@/apis/getArticle'
+import { deleteArticle, fecthArticle } from '@/apis/Article'
 const { Option } = Select
 const { RangePicker } = DatePicker
 

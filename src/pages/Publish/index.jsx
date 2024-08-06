@@ -11,17 +11,42 @@ import {
   message,
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchPublish } from '@/apis/postPublish'
 import useChannels from '@/hooks/useChannels'
+import { edidArticle, getArticleDateil } from '@/apis/Article'
 
 const { Option } = Select
 
 const Publish = () => {
+  // 上传图片
+  const [imageList, setImageList] = useState([])
+  const onUploadChange = (info) => {
+    setImageList(info.fileList)
+  }
+
+  // 数据回填
+  const [searchParams] = useSearchParams()
+  const articleId = searchParams.get('id')
+  const [form] = Form.useForm()
+  useEffect(() => {
+    const getDatetail = async () => {
+      if (articleId) {
+        const { data } = await getArticleDateil(articleId)
+        const { cover, ...formValue } = data
+        // 设置表单数据
+        form.setFieldsValue({ ...formValue, type: cover.type })
+        setImgType(cover.type)
+        setImageList(cover.images.map((url) => ({ url })))
+      }
+    }
+    getDatetail()
+  }, [form, articleId])
+
   // 获取频道
   const { channels } = useChannels()
 
@@ -32,22 +57,24 @@ const Publish = () => {
     setImgType(v.target.value)
   }
 
-  // 上传图片
-  const [imageList, setImageList] = useState([])
-  const onUploadChange = (info) => {
-    setImageList(info.fileList)
-  }
-
-  // 获取表单内容
+  // 提交/更新 表单内容
   const onFinish = async (formValue) => {
     if (imgType !== imageList.length)
       return message.warning('图片类型和数量不一致')
     formValue.cover = {
       type: imgType, // 封面模式
-      images: imageList.map((item) => item.response.data.url), // 图片列表
+      images: imageList.map((item) =>
+        item.response ? item.response.data.url : item.url
+      ), // 图片列表
     }
-    await fetchPublish(formValue)
-    message.success('发布文章成功')
+    console.log({ id: articleId, ...formValue })
+
+    if (articleId) {
+      await edidArticle(articleId, { ...formValue })
+    } else {
+      await fetchPublish(formValue)
+    }
+    message.success(articleId ? '更新文章成功' : '发布文章成功')
   }
 
   return (
@@ -57,7 +84,7 @@ const Publish = () => {
           <Breadcrumb
             items={[
               { title: <Link to={'/'}>首页</Link> },
-              { title: '发布文章' },
+              { title: articleId ? '编辑文章' : '发布文章' },
             ]}
           />
         }
@@ -67,6 +94,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
           onFinish={onFinish}
+          form={form}
         >
           {/* 标题 */}
           <Form.Item
@@ -110,6 +138,7 @@ const Publish = () => {
                 showUploadList
                 action={'http://geek.itheima.net/v1_0/upload'}
                 onChange={onUploadChange}
+                fileList={imageList}
               >
                 <div style={{ marginTop: 8 }}>
                   <PlusOutlined />
@@ -135,7 +164,7 @@ const Publish = () => {
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
               <Button size='large' type='primary' htmlType='submit'>
-                发布文章
+                {articleId ? '编辑文章' : '发布文章'}
               </Button>
             </Space>
           </Form.Item>
