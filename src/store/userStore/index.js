@@ -27,7 +27,7 @@ const userStore = createSlice({
   },
 })
 
-const { setToken, setUserInfo ,clearUserInfo} = userStore.actions
+const { setToken, setUserInfo, clearUserInfo } = userStore.actions
 const userReducer = userStore.reducer
 
 export { setToken, setUserInfo, clearUserInfo }

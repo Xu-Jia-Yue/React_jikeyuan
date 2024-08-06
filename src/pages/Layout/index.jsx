@@ -57,6 +57,7 @@ const GeekLayout = () => {
 
   return (
     <Layout>
+      {/* 头部 */}
       <Header className='header'>
         <div className='logo' />
         <div className='user-info'>
@@ -73,6 +74,7 @@ const GeekLayout = () => {
           </span>
         </div>
       </Header>
+      {/* 导航栏 */}
       <Layout>
         <Sider width={200} className='site-layout-background'>
           <Menu
@@ -84,6 +86,7 @@ const GeekLayout = () => {
             style={{ height: '100%', borderRight: 0 }}
           ></Menu>
         </Sider>
+        {/* 二级路由出口 */}
         <Layout className='layout-content' style={{ padding: 20 }}>
           <Outlet />
         </Layout>

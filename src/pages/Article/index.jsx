@@ -8,23 +8,18 @@ import {
   DatePicker,
   Select,
   Table,
-  Space,
-  Tag,
-  Popconfirm,
   message,
 } from 'antd'
 // 引入中文包
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import useChannels from '@/hooks/useChannels'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
-import img404 from '@/assets/error.png'
 import { deleteArticle, fecthArticle } from '@/apis/Article'
+import useColumns from './columns'
 const { Option } = Select
 const { RangePicker } = DatePicker
 
 const Article = () => {
-  const naviagate = useNavigate()
   // 获取频道
   const { channels } = useChannels()
 
@@ -34,6 +29,7 @@ const Article = () => {
     count: 0,
   })
 
+  // 获取文章列表的参数
   const [ariclesParams, setAriclesParams] = useState({
     page: 1,
     per_page: 4,
@@ -43,7 +39,7 @@ const Article = () => {
     channel_id: null,
   })
 
-  // 列表刷新
+  // 列表刷新更新页面
   const getList = async (params) => {
     const { data } = await fecthArticle(params)
     setArticleList({ list: data.results, count: data.total_count })
@@ -79,73 +75,8 @@ const Article = () => {
     message.success('删除成功')
   }
 
-  // 准备列数据
-  const columns = [
-    {
-      title: '封面',
-      dataIndex: 'cover',
-      width: 120,
-      render: (cover) => {
-        return (
-          <img src={cover.images[0] || img404} width={80} height={60} alt='' />
-        )
-      },
-    },
-    {
-      title: '标题',
-      dataIndex: 'title',
-      width: 220,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      render: (data) =>
-        data === 2 ? (
-          <Tag color='success'>审核通过</Tag>
-        ) : (
-          <Tag color='warning'>待审核</Tag>
-        ),
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'pubdate',
-    },
-    {
-      title: '阅读数',
-      dataIndex: 'read_count',
-    },
-    {
-      title: '评论数',
-      dataIndex: 'comment_count',
-    },
-    {
-      title: '点赞数',
-      dataIndex: 'like_count',
-    },
-    {
-      title: '操作',
-      render: (data) => {
-        return (
-          <Space size='middle'>
-            <Button type='primary' shape='circle' icon={<EditOutlined />} onClick={() => naviagate(`/publish?id=${data.id}`)} />
-            <Popconfirm
-              title='确认删除该条文章吗?'
-              onConfirm={() => delArticle(data)}
-              okText='确认'
-              cancelText='取消'
-            >
-              <Button
-                type='primary'
-                danger
-                shape='circle'
-                icon={<DeleteOutlined />}
-              />
-            </Popconfirm>
-          </Space>
-        )
-      },
-    },
-  ]
+  // 获取 列 数据
+  const { columns } = useColumns(delArticle)
 
   return (
     <div>
@@ -199,6 +130,7 @@ const Article = () => {
             rowKey='id'
             columns={columns}
             dataSource={articleList.list}
+            // 页码
             pagination={{
               current: ariclesParams.page,
               pageSize: ariclesParams.per_page,

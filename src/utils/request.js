@@ -3,6 +3,7 @@ import { getLocalToken } from './token'
 import router from '@/router'
 import { clearLocalToken } from './token'
 import { message } from 'antd'
+
 // 自定义创建axios实例
 const request = axios.create({
   baseURL: 'http://geek.itheima.net/v1_0',

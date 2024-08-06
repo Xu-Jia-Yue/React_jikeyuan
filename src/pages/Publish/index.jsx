@@ -13,6 +13,7 @@ import {
 import { PlusOutlined } from '@ant-design/icons'
 import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
+// 富文本编辑器
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useState } from 'react'
@@ -23,10 +24,37 @@ import { edidArticle, getArticleDateil } from '@/apis/Article'
 const { Option } = Select
 
 const Publish = () => {
-  // 上传图片
+  // 获取频道
+  const { channels } = useChannels()
+
+  // 上传封面
+  const [imgType, setImgType] = useState(0)
   const [imageList, setImageList] = useState([])
+  const onTypeChange = (v) => {
+    setImageList([])
+    setImgType(v.target.value)
+  }
   const onUploadChange = (info) => {
     setImageList(info.fileList)
+  }
+
+  // 提交/更新 表单内容
+  const onFinish = async (formValue) => {
+    if (imgType !== imageList.length)
+      return message.warning('图片类型和数量不一致')
+    formValue.cover = {
+      type: imgType, // 封面模式
+      images: imageList.map((item) =>
+        item.response ? item.response.data.url : item.url
+      ), // 图片列表--存储url的对象结构不同 进行判断
+    }
+    // 调用API
+    if (articleId) {
+      await edidArticle(articleId, { ...formValue })
+    } else {
+      await fetchPublish(formValue)
+    }
+    message.success(articleId ? '更新文章成功' : '发布文章成功')
   }
 
   // 数据回填
@@ -46,36 +74,6 @@ const Publish = () => {
     }
     getDatetail()
   }, [form, articleId])
-
-  // 获取频道
-  const { channels } = useChannels()
-
-  // 上传封面
-  const [imgType, setImgType] = useState(0)
-  const onTypeChange = (v) => {
-    setImageList([])
-    setImgType(v.target.value)
-  }
-
-  // 提交/更新 表单内容
-  const onFinish = async (formValue) => {
-    if (imgType !== imageList.length)
-      return message.warning('图片类型和数量不一致')
-    formValue.cover = {
-      type: imgType, // 封面模式
-      images: imageList.map((item) =>
-        item.response ? item.response.data.url : item.url
-      ), // 图片列表
-    }
-    console.log({ id: articleId, ...formValue })
-
-    if (articleId) {
-      await edidArticle(articleId, { ...formValue })
-    } else {
-      await fetchPublish(formValue)
-    }
-    message.success(articleId ? '更新文章成功' : '发布文章成功')
-  }
 
   return (
     <div className='publish'>

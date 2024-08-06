@@ -1,4 +1,4 @@
-// 封装存取方法
+// 封装存取token方法
 const TOKENKEY = 'token_key'
 
 function setLocalToken(token) {

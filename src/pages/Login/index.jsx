@@ -8,12 +8,14 @@ import { useNavigate } from 'react-router-dom'
 const Login = () => {
   const disPatch = useDispatch()
   const navigate = useNavigate()
+
   // 格式正确提交回调
   const onFinish = async (userData) => {
     await disPatch(fetchToken(userData))
     navigate('/')
     message.success('登录成功')
   }
+
   return (
     <div className='login'>
       <Card className='login-container'>
@@ -22,6 +24,7 @@ const Login = () => {
         <Form validateTrigger='onBlur' onFinish={onFinish}>
           <Form.Item
             name='mobile'
+            // 验证规则
             rules={[
               {
                 required: true,
